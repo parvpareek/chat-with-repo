@@ -47,7 +47,7 @@ def main():
     choice = input("Enter 1 to use OPEN API enter 0 to use loally setup llama2 model using Ollama")
     if not os.path.exists(PERSIST_DIR):
         owner = input("Enter the username of the owner of the repo: ")
-        repo = input("Enter the name of the repo")
+        repo = input("Enter the name of the repo: ")
         documents = load_data(github_token, owner, repo)
         embedding_model = load_embedding_model()
         try:
@@ -70,10 +70,26 @@ def main():
         storage_context = StorageContext.from_defaults(persist_dir=PERSIST_DIR)
         index = load_index_from_storage(storage_context)
         print("Already indexed data loaded")
+        
 
     query_engine = index.as_query_engine()
-    response = query_engine.query("What is this repository about?")
-    print(response)
+    qa_prompt_tmpl_str = (
+            "Context information is below.\n"
+            "---------------------\n"
+            "{context_str}\n"
+            "---------------------\n"
+            "Given the context information above I want you to think step by step to answer the query in a crisp manner, incase case you don't know the answer say 'I don't know!'.\n"
+            "Query: {query_str}\n"
+            "Answer: "
+            )
+
+    qa_prompt_tmpl = PromptTemplate(qa_prompt_tmpl_str)
+    query_engine.update_prompts({"response_synthesizer:text_qa_template": qa_prompt_tmpl})
+    print("Press ctr + c to exit")
+    while True:
+        query = input("Enter your query: ")
+        response = query_engine.query(query)
+        print(response)
 
     
 if __name__ == "__main__":
