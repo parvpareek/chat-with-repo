@@ -3,6 +3,9 @@
 
 Welcome to the Chat-with-Code application repository! This project utilizes Retrieval Augmented Generation techniques using LlamaIndex, LangChain, and Ollama to interact with codebases
 
+## Demo
+[Screencast from 2024-03-10 21-57-18.webm](https://github.com/parvpareek/chat-with-repo/assets/26191530/e8c30c5d-9c2a-4ecd-99e2-8b016950948d)
+
 ## Setting up Environment Variables
 
 Before running the application, ensure you have set up the following environment variables:
@@ -22,6 +25,7 @@ Before running the application, ensure you have set up the following environment
 
    For Windows users, set the environment variable using the appropriate command.
    ```
+
    set OPEN_API_KEY=your_open_api_key_here
    ```
 
@@ -37,7 +41,8 @@ source venv/bin/activate  # For Linux/Mac
 venv\Scripts\activate      # For Windows
 
 # Install dependencies
-pip install -r requirements.txt
+pip install -r requirements.txt[Screencast from 2024-03-10 21-57-18.webm](https://github.com/parvpareek/chat-with-repo/assets/26191530/a2ae9073-a9fd-4231-b889-a7c870426c70)
+
 ```
 
 ## Setting up Ollama (Local LLM)
