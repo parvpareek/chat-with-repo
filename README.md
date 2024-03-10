@@ -67,7 +67,7 @@ If you wish to use Ollama (Local Language Model) for enhanced interactions, foll
 After setting up the environment variables and installing dependencies, you can run the Chat-with-Code application.
 
 ```bash
-python main.py
+python src/main.py
 ```
 
 Feel free to explore the functionalities and engage in interactive code discussions!
