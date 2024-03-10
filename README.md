@@ -47,6 +47,8 @@ If you wish to use Ollama (Local Language Model) for enhanced interactions, foll
 1. Install Ollama 
 
     ```bash 
+    sudo apt install curl
+    curl -fsSL https://ollama.com/install.sh | sh
     pip install -r ollama.txt
     ```
 
