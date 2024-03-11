@@ -1,10 +1,10 @@
 import dotenv 
 import os
 from llama_index.readers.github import GithubRepositoryReader, GithubClient
-from llama_index.core import (VectorStoreIndex, StorageContext, PromptTemplate, load_index_from_storage)
+from llama_index.core import (VectorStoreIndex, StorageContext, PromptTemplate, load_index_from_storage, Settings)
 from llama_index.embeddings.huggingface import HuggingFaceEmbedding
 from llama_index.llms.ollama import Ollama
-
+from llama_index.embeddings.openai import OpenAIEmbedding
 
 def load_environ_vars():
     dotenv.load_dotenv()
@@ -38,29 +38,34 @@ def load_data(github_token: str, owner: str, repo: str):
 def load_embedding_model():
     embedding_model = HuggingFaceEmbedding(model_name="BAAI/bge-small-en-v1.5") 
     print("embedding model loaded")
+    return embedding_model
     
     
 def main():
     github_token = load_environ_vars()
     PERSIST_DIR = "./basic/storage"
     
-    choice = input("Enter 1 to use OPEN API enter 0 to use loally setup llama2 model using Ollama")
+    choice = input("Enter 1 to use OPEN API enter 0 to use loally setup llama2 model using Ollama:")
     if not os.path.exists(PERSIST_DIR):
         owner = input("Enter the username of the owner of the repo: ")
         repo = input("Enter the name of the repo: ")
         documents = load_data(github_token, owner, repo)
-        embedding_model = load_embedding_model()
         try:
             if choice == '1':
+                print("Open API is being used")
+                embedding_model = OpenAIEmbedding()
                 index = VectorStoreIndex.from_documents(documents)
             else:
+                print("Ollama is being used")
+                embedding_model = load_embedding_model()
+                Settings.embed_model = embedding_model
+                
                 index = VectorStoreIndex.from_documents(
                     documents,
-                    embed_model=embedding_model,
+                    embed_model=embedding_model
                     )
-                llama = Ollama(model="llama2", request_timeout=200.0)
-        except:
-            print("YOU DONT HAVE OPEN API CREDITS")
+        except Exception as  e:
+            print(e)
             exit()
         print("Documents Indexed")
 
@@ -71,8 +76,9 @@ def main():
         index = load_index_from_storage(storage_context)
         print("Already indexed data loaded")
         
-
-    query_engine = index.as_query_engine()
+    llama = Ollama(model="llama2", request_timeout=200.0)
+    Settings.llm = llama
+    query_engine = index.as_query_engine(llm=llama)
     qa_prompt_tmpl_str = (
             "Context information is below.\n"
             "---------------------\n"
